@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Registration</title>
+    <title>Student Login</title>
 </head>
 <body>
 
-<h1>Student Registration</h1>
+<h1>Student Login</h1>
 
 <form method="POST">
     {% csrf_token %}
@@ -17,13 +17,6 @@
 
     <br><br>
 
-    <input type="email"
-           name="email"
-           placeholder="Email"
-           required>
-
-    <br><br>
-
     <input type="password"
            name="password"
            placeholder="Password"
@@ -31,7 +24,7 @@
 
     <br><br>
 
-    <button type="submit">Register</button>
+    <button type="submit">Login</button>
 </form>
 
 {% for message in messages %}
