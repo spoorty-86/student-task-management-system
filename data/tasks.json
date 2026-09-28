@@ -1,0 +1,138 @@
+[
+  {
+    "id": "task-101",
+    "ticketId": "STMS-10",
+    "title": "Setup Git Repository & Branching Strategy",
+    "description": "Initialize Git repository, configure main and feature branches, and establish branch protection rules.",
+    "priority": "High",
+    "status": "Done",
+    "deadline": "2026-10-01",
+    "assigneeId": "usr-101",
+    "assignedAt": "2026-09-22T09:00:00.000Z",
+    "assignedBy": "usr-101",
+    "history": [
+      {
+        "action": "ASSIGNED",
+        "to": "usr-101",
+        "by": "usr-101",
+        "timestamp": "2026-09-22T09:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "task-102",
+    "ticketId": "STMS-11",
+    "title": "Design Database Schema & Entities",
+    "description": "Model Student, Task, Assignment, and Deadline entities with proper constraints and relationships.",
+    "priority": "Medium",
+    "status": "In Progress",
+    "deadline": "2026-10-05",
+    "assigneeId": "usr-102",
+    "assignedAt": "2026-09-24T11:15:00.000Z",
+    "assignedBy": "usr-101",
+    "history": [
+      {
+        "action": "ASSIGNED",
+        "to": "usr-102",
+        "by": "usr-101",
+        "timestamp": "2026-09-24T11:15:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": "task-103",
+    "ticketId": "STMS-12",
+    "title": "Implement Task Assignment Functionality",
+    "description": "Allow users to assign a task to a specific team member, store assignment details, and display linked assignee data.",
+    "priority": "High",
+    "status": "In Progress",
+    "deadline": "2026-10-08",
+    "assigneeId": null,
+    "assignedAt": null,
+    "assignedBy": null,
+    "history": [
+      {
+        "action": "UNASSIGNED",
+        "from": null,
+        "to": null,
+        "by": "test-suite",
+        "timestamp": "2026-09-28T11:07:12.343Z"
+      },
+      {
+        "action": "UNASSIGNED",
+        "from": "usr-104",
+        "to": null,
+        "by": "usr-101",
+        "timestamp": "2026-09-28T11:07:12.315Z"
+      },
+      {
+        "action": "REASSIGNED",
+        "from": "usr-102",
+        "to": "usr-104",
+        "by": "usr-101",
+        "timestamp": "2026-09-28T11:07:12.303Z"
+      },
+      {
+        "action": "ASSIGNED",
+        "from": null,
+        "to": "usr-102",
+        "by": "usr-101",
+        "timestamp": "2026-09-28T11:07:12.289Z"
+      },
+      {
+        "action": "UNASSIGNED",
+        "from": null,
+        "to": null,
+        "by": "test-suite",
+        "timestamp": "2026-09-28T10:44:37.728Z"
+      },
+      {
+        "action": "UNASSIGNED",
+        "from": "usr-104",
+        "to": null,
+        "by": "usr-101",
+        "timestamp": "2026-09-28T10:44:37.648Z"
+      },
+      {
+        "action": "REASSIGNED",
+        "from": "usr-102",
+        "to": "usr-104",
+        "by": "usr-101",
+        "timestamp": "2026-09-28T10:44:37.634Z"
+      },
+      {
+        "action": "ASSIGNED",
+        "from": null,
+        "to": "usr-102",
+        "by": "usr-101",
+        "timestamp": "2026-09-28T10:44:37.603Z"
+      }
+    ]
+  },
+  {
+    "id": "task-104",
+    "ticketId": "STMS-13",
+    "title": "View Assigned Tasks Dashboard",
+    "description": "Create filterable views for team members to inspect tasks assigned to them.",
+    "priority": "Medium",
+    "status": "To Do",
+    "deadline": "2026-10-12",
+    "assigneeId": null,
+    "assignedAt": null,
+    "assignedBy": null,
+    "history": []
+  },
+  {
+    "id": "task-105",
+    "ticketId": "STMS-15",
+    "title": "Set Task Deadlines and Urgency Indicators",
+    "description": "Implement deadline picker and countdown indicators for approaching deliverables.",
+    "priority": "Low",
+    "status": "To Do",
+    "deadline": "2026-10-15",
+    "assigneeId": null,
+    "assignedAt": null,
+    "assignedBy": null,
+    "history": []
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "usr-101",
+    "name": "R Srujan Kumar",
+    "email": "srujankumarr527@gmail.com",
+    "role": "Project Lead",
+    "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Srujan"
+  },
+  {
+    "id": "usr-102",
+    "name": "Spoorthi C",
+    "email": "spoorti@university.edu",
+    "role": "Backend Developer",
+    "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Spoorthi"
+  },
+  {
+    "id": "usr-103",
+    "name": "Alex Johnson",
+    "email": "alex.j@university.edu",
+    "role": "DevOps Engineer",
+    "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Alex"
+  },
+  {
+    "id": "usr-104",
+    "name": "Priya Patel",
+    "email": "priya.p@university.edu",
+    "role": "Frontend Developer",
+    "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Priya"
+  },
+  {
+    "id": "usr-105",
+    "name": "Rahul Sharma",
+    "email": "rahul.s@university.edu",
+    "role": "QA Engineer",
+    "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Rahul"
+  }
+]

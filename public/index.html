@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Student Task Management System - Streamlined task tracking and assignment for student engineering teams.">
+  <title>Student Task Management System | STMS-12</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">EduTask <span class="badge-feature">STMS-12</span></h1>
+          <p class="brand-subtitle">Student Task Management System</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="branch-pill">
+          <span class="pulse-dot"></span>
+          <code id="currentBranch">branch: STMS-12-assign-task</code>
+        </div>
+        <div class="current-user-card" id="currentUserDisplay">
+          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Srujan" alt="Srujan" class="user-avatar" id="currentUserAvatar">
+          <div class="user-info">
+            <span class="user-name" id="currentUserName">R Srujan Kumar</span>
+            <span class="user-role">Project Lead</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-container">
+    <!-- Metrics Overview -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon total">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9 2 2 4-4"/></svg>
+        </div>
+        <div>
+          <span class="metric-label">Total Tasks</span>
+          <h3 class="metric-val" id="metricTotal">--</h3>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon assigned">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m19 11 2 2 4-4"/></svg>
+        </div>
+        <div>
+          <span class="metric-label">Assigned</span>
+          <h3 class="metric-val" id="metricAssigned">--</h3>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon unassigned">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <div>
+          <span class="metric-label">Unassigned Tasks</span>
+          <h3 class="metric-val" id="metricUnassigned">--</h3>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon my-tasks">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div>
+          <span class="metric-label">Assigned to Me</span>
+          <h3 class="metric-val" id="metricMyTasks">--</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls & Filter Toolbar -->
+    <section class="toolbar-section">
+      <div class="search-filter-group">
+        <div class="search-box">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="searchInput" placeholder="Search tasks by title, ID, or description..." autocomplete="off">
+        </div>
+
+        <div class="select-wrapper">
+          <label for="filterAssignee" class="sr-only">Filter by Assignee</label>
+          <select id="filterAssignee">
+            <option value="all">All Assignees</option>
+            <option value="unassigned">⚠️ Unassigned Only</option>
+            <option value="mine">👤 Assigned to Me</option>
+            <!-- Dynamic student options populated via JS -->
+          </select>
+        </div>
+
+        <div class="select-wrapper">
+          <label for="filterPriority" class="sr-only">Filter by Priority</label>
+          <select id="filterPriority">
+            <option value="all">All Priorities</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="btnOpenCreateModal" class="btn btn-primary">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        New Task
+      </button>
+    </section>
+
+    <!-- Task Cards Grid -->
+    <section class="tasks-container">
+      <div class="section-title-row">
+        <h2 class="section-heading">Project Backlog & Tasks</h2>
+        <span class="tasks-counter" id="tasksCounter">Showing 0 tasks</span>
+      </div>
+
+      <div class="tasks-grid" id="tasksGrid">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Assign / Reassign Task (STMS-12 Core Modal) -->
+  <div class="modal-overlay" id="assignModalOverlay" role="dialog" aria-modal="true" aria-labelledby="assignModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="modal-pre-title" id="assignModalTicketId">STMS-12</span>
+          <h3 class="modal-title" id="assignModalTitle">Assign Task to Team Member</h3>
+        </div>
+        <button class="btn-close" id="btnCloseAssignModal" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-task-title" id="assignModalTaskName">Task Name</p>
+        
+        <div class="assign-search-box">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="memberSearchInput" placeholder="Filter students by name or role...">
+        </div>
+
+        <div class="team-members-list" id="teamMembersList">
+          <!-- Member items populated dynamically -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btnUnassignTask" class="btn btn-danger-outline">Unassign Task</button>
+        <button id="btnCancelAssign" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create New Task -->
+  <div class="modal-overlay" id="createModalOverlay" role="dialog" aria-modal="true" aria-labelledby="createModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="createModalTitle">Create New Task</h3>
+        <button class="btn-close" id="btnCloseCreateModal" aria-label="Close modal">&times;</button>
+      </div>
+
+      <form id="createTaskForm" class="modal-form">
+        <div class="form-group">
+          <label for="createTitle">Task Title *</label>
+          <input type="text" id="createTitle" required placeholder="e.g. Set up Docker containerization">
+        </div>
+
+        <div class="form-group">
+          <label for="createDescription">Description</label>
+          <textarea id="createDescription" rows="3" placeholder="Provide context, acceptance criteria or links..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="createPriority">Priority</label>
+            <select id="createPriority">
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="createDeadline">Deadline</label>
+            <input type="date" id="createDeadline">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="createAssignee">Initial Assignee (Optional)</label>
+          <select id="createAssignee">
+            <option value="">Leave Unassigned</option>
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <div class="modal-footer form-footer">
+          <button type="button" id="btnCancelCreate" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
