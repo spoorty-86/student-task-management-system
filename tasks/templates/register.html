@@ -25,9 +25,12 @@
     <button type="submit">Register</button>
 </form>
 
+<p>Already have an account? <a href="{% url 'student_login' %}">Login here</a></p>
+
 {% for message in messages %}
     <p>{{ message }}</p>
 {% endfor %}
+
 
 </body>
 </html>

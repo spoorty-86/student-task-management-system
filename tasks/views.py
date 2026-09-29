@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from .models import Task
 
 
 def register(request):
@@ -20,7 +22,7 @@ def register(request):
             password=password
         )
 
-        messages.success(request, "Registration successful")
+        messages.success(request, "Registration successful!")
         return redirect("register")
 
     return render(request, "register.html")
@@ -52,4 +54,35 @@ def student_logout(request):
 
 
 def dashboard(request):
-    return render(request, "dashboard.html")
+    tasks = Task.objects.filter(created_by=request.user).order_by("-created_at") if request.user.is_authenticated else []
+    return render(request, "dashboard.html", {"tasks": tasks})
+
+
+@login_required
+def view_tasks(request):
+    tasks = Task.objects.filter(created_by=request.user).order_by("-created_at")
+    return render(request, "tasks.html", {"tasks": tasks})
+
+
+@login_required
+def create_task(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+
+        if not title:
+            return render(
+                request,
+                "create_task.html",
+                {"error": "Task title is required."}
+            )
+
+        Task.objects.create(
+            title=title,
+            description=description,
+            created_by=request.user
+        )
+
+        return redirect("view_tasks")
+
+    return render(request, "create_task.html")
