@@ -27,7 +27,14 @@
         Created: {{ task.created_at }}
     </p>
 
+    <p>
+        <a href="{% url 'update_task' task.id %}">
+            <button type="button">Update</button>
+        </a>
+    </p>
+
     <hr>
+
 
     {% empty %}
 
