@@ -106,4 +106,5 @@ def update_task(request, task_id):
         request,
         "update_task.html",
         {"task": task}
-    )
+    )
+
