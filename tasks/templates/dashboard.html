@@ -9,7 +9,11 @@
 
 <p>Login successful!</p>
 
-<a href="{% url 'student_logout' %}">Logout</a>
+<p>
+    <a href="{% url 'view_tasks' %}">View My Tasks</a> |
+    <a href="{% url 'create_task' %}">Create New Task</a> |
+    <a href="{% url 'student_logout' %}">Logout</a>
+</p>
 
 </body>
 </html>
