@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Update Task</title>
+</head>
+
+<body>
+
+    <h2>Update Task</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label>Task Title:</label>
+        <br>
+
+        <input type="text" name="title" value="{{ task.title }}" required>
+
+        <br><br>
+
+        <label>Description:</label>
+        <br>
+
+        <textarea name="description" rows="5" cols="40">{{ task.description }}</textarea>
+
+        <br><br>
+
+        <button type="submit">
+            Update Task
+        </button>
+        <a href="{% url 'view_tasks' %}">Cancel</a>
+
+
+    </form>
+
+</body>
+
+</html>

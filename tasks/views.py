@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -86,3 +86,25 @@ def create_task(request):
         return redirect("view_tasks")
 
     return render(request, "create_task.html")
+
+
+@login_required
+def update_task(request, task_id):
+    task = get_object_or_404(
+        Task,
+        id=task_id,
+        created_by=request.user
+    )
+
+    if request.method == "POST":
+        task.title = request.POST.get("title")
+        task.description = request.POST.get("description")
+        task.save()
+        return redirect("view_tasks")
+
+    return render(
+        request,
+        "update_task.html",
+        {"task": task}
+    )
+
