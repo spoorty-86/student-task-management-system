@@ -1,36 +1,47 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Student Registration</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - Task Management</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
+    <div class="container" style="max-width: 450px;">
+        <div class="card">
+            <h1>Create Account</h1>
+            <p>Register to start organizing your student tasks.</p>
 
-<h1>Student Registration</h1>
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
 
-<form method="POST">
-    {% csrf_token %}
+            <form method="POST">
+                {% csrf_token %}
 
-    <label>Username:</label>
-    <input type="text" name="username" required>
-    <br><br>
+                <div>
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Choose a username" required>
+                </div>
 
-    <label>Email:</label>
-    <input type="email" name="email" required>
-    <br><br>
+                <div>
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                </div>
 
-    <label>Password:</label>
-    <input type="password" name="password" required>
-    <br><br>
+                <div>
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Create a password" required>
+                </div>
 
-    <button type="submit">Register</button>
-</form>
+                <button type="submit" style="width: 100%; margin-top: 0.5rem;">Register Account</button>
+            </form>
 
-<p>Already have an account? <a href="{% url 'student_login' %}">Login here</a></p>
-
-{% for message in messages %}
-    <p>{{ message }}</p>
-{% endfor %}
-
-
+            <p style="margin-top: 1.5rem; text-align: center;">
+                Already have an account? <a href="{% url 'login' %}">Login here</a>
+            </p>
+        </div>
+    </div>
 </body>
-</html>
+</html>

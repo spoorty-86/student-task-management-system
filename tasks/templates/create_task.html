@@ -1,42 +1,41 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Create Task</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task - Student Task System</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-
 <body>
+    <div class="container" style="max-width: 550px;">
+        <div class="card">
+            <h1>Create New Task</h1>
+            <p>Add details for your new task assignment.</p>
 
-    <h2>Create New Task</h2>
+            {% if error %}
+                <div class="message" style="border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;">{{ error }}</div>
+            {% endif %}
 
-    {% if error %}
-    <p>{{ error }}</p>
-    {% endif %}
+            <form method="POST">
+                {% csrf_token %}
 
-    <form method="POST">
+                <div>
+                    <label>Task Title</label>
+                    <input type="text" name="title" placeholder="Enter task title" required>
+                </div>
 
-        {% csrf_token %}
+                <div>
+                    <label>Task Description</label>
+                    <textarea name="description" placeholder="Enter detailed task description" rows="4"></textarea>
+                </div>
 
-        <label>Task Title:</label>
-        <br>
-        <input type="text" name="title" placeholder="Enter task title" required>
-
-        <br><br>
-
-        <label>Task Description:</label>
-        <br>
-        <textarea name="description" placeholder="Enter task description" rows="5" cols="40"></textarea>
-
-        <br><br>
-
-        <button type="submit">
-            Create Task
-        </button>
-        <a href="{% url 'view_tasks' %}">Cancel</a>
-
-
-    </form>
-
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="submit">Create Task</button>
+                    <a href="{% url 'view_tasks' %}" style="display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; border-radius: 10px; background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--card-border);">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
-
-</html>
+</html>
