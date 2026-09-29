@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-c8r#v&i_8@b%3ppv^(tcm$d)owg)h317$7&&)w3&2@tx12g5ix
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = 'dashboard'
+
 
 
 # Application definition
@@ -127,5 +130,3 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = 'student_login'
-LOGIN_REDIRECT_URL = 'dashboard'

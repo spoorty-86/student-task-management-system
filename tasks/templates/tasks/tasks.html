@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Tasks</title>
+</head>
+
+<body>
+
+    <h2>My Tasks</h2>
+
+    {% if tasks %}
+
+        {% for task in tasks %}
+
+            <div>
+                <h3>{{ task.title }}</h3>
+
+                <p>{{ task.description }}</p>
+
+                <p>
+                    Created:
+                    {{ task.created_at }}
+                </p>
+
+                <form method="POST"
+                      action="{% url 'delete_task' task.id %}"
+                      onsubmit="return confirm('Are you sure you want to delete this task?');">
+
+                    {% csrf_token %}
+
+                    <button type="submit">
+                        Delete
+                    </button>
+
+                </form>
+            </div>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No tasks available.</p>
+
+    {% endif %}
+
+</body>
+</html>

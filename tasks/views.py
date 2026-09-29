@@ -53,15 +53,38 @@ def student_logout(request):
     return redirect("student_login")
 
 
+@login_required
 def dashboard(request):
-    tasks = Task.objects.filter(created_by=request.user).order_by("-created_at") if request.user.is_authenticated else []
+    tasks = Task.objects.filter(created_by=request.user).order_by("-created_at")
     return render(request, "dashboard.html", {"tasks": tasks})
+
 
 
 @login_required
 def view_tasks(request):
-    tasks = Task.objects.filter(created_by=request.user).order_by("-created_at")
-    return render(request, "tasks.html", {"tasks": tasks})
+    tasks = Task.objects.filter(
+        created_by=request.user
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "tasks/tasks.html",
+        {"tasks": tasks}
+    )
+
+
+@login_required
+def delete_task(request, task_id):
+    task = get_object_or_404(
+        Task,
+        id=task_id,
+        created_by=request.user
+    )
+
+    if request.method == "POST":
+        task.delete()
+
+    return redirect("view_tasks")
 
 
 @login_required
@@ -107,4 +130,23 @@ def update_task(request, task_id):
         "update_task.html",
         {"task": task}
     )
+
+
+@login_required
+def update_task_status(request, task_id):
+    task = get_object_or_404(
+        Task,
+        id=task_id,
+        created_by=request.user
+    )
+
+    if request.method == "POST":
+        status = request.POST.get("status")
+        if status:
+            task.status = status
+            task.save()
+
+    return redirect("view_tasks")
+
+
 
