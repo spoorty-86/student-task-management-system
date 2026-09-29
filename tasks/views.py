@@ -20,7 +20,7 @@ def register(request):
             password=password
         )
 
-        messages.success(request, "Registration successful!")
+        messages.success(request, "Registration successful")
         return redirect("register")
 
     return render(request, "register.html")
