@@ -1,16 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Register</title>
+    <title>Student Registration</title>
 </head>
 <body>
-    <h2>Create account</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+
+<h1>Student Registration</h1>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Username:</label>
+    <input type="text" name="username" required>
+    <br><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+    <br><br>
+
+    <label>Password:</label>
+    <input type="password" name="password" required>
+    <br><br>
+
+    <button type="submit">Register</button>
+</form>
+
+{% for message in messages %}
+    <p>{{ message }}</p>
+{% endfor %}
+
 </body>
 </html>

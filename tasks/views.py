@@ -1,83 +1,55 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth.views import LogoutView
-from django.db.models import Q
-from django.shortcuts import redirect, render
-
-from .models import Task
+from django.contrib.auth import authenticate, login, logout
 
 
-def register_view(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+def register(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+            return redirect("register")
+
+        User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+
+        messages.success(request, "Registration successful")
+        return redirect("register")
+
+    return render(request, "register.html")
+
+
+def student_login(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None:
             login(request, user)
-            messages.success(request, 'Account created successfully.')
-            return redirect('dashboard')
-    else:
-        form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
+            return redirect("dashboard")
+
+        messages.error(request, "Invalid username or password")
+
+    return render(request, "login.html")
 
 
-def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            login(request, form.get_user())
-            return redirect('dashboard')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
+def student_logout(request):
+    logout(request)
+    return redirect("student_login")
 
 
-@login_required(login_url='login')
-def dashboard_view(request):
-    tasks = list(Task.objects.filter(
-        Q(created_by=request.user) | Q(assignee=request.user)
-    ).distinct().order_by('deadline', '-created_at'))
-
-    return render(request, 'dashboard.html', {'tasks': tasks, 'request_user': request.user})
-
-
-@login_required(login_url='login')
-def create_task(request):
-    if request.method == 'POST':
-        title = request.POST.get('title', '').strip()
-        description = request.POST.get('description', '').strip()
-        priority = request.POST.get('priority', 'Medium')
-        status = request.POST.get('status', 'To Do')
-
-        if title:
-            Task.objects.create(
-                title=title,
-                description=description,
-                created_by=request.user,
-                assignee=request.user,
-                priority=priority,
-                status=status,
-            )
-            messages.success(request, 'Task created successfully.')
-        return redirect('dashboard')
-
-    return render(request, 'create_task.html', {'request_user': request.user})
-
-
-@login_required(login_url='login')
-def update_task_status(request, task_id):
-    task = Task.objects.filter(id=task_id).first()
-    if task is None:
-        return redirect('dashboard')
-
-    if request.method == 'POST':
-        new_status = request.POST.get('status')
-        if new_status in dict(Task.STATUS_CHOICES):
-            task.status = new_status
-            task.save()
-
-    return redirect('dashboard')
-
-
-logout_view = LogoutView.as_view(next_page='login')
+def dashboard(request):
+    return render(request, "dashboard.html")
