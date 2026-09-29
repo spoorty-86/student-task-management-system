@@ -1,30 +1,42 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Student Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - Task Management</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
+    <div class="container" style="max-width: 450px;">
+        <div class="card">
+            <h1>Student Login</h1>
+            <p>Welcome back! Log in to manage your tasks.</p>
 
-<h1>Student Login</h1>
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
 
-<form method="POST">
-    {% csrf_token %}
+            <form method="POST">
+                {% csrf_token %}
 
-    <input type="text" name="username" placeholder="Username" required>
-    <br><br>
+                <div>
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Enter your username" required>
+                </div>
 
-    <input type="password" name="password" placeholder="Password" required>
-    <br><br>
+                <div>
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                </div>
 
-    <button type="submit">Login</button>
-</form>
+                <button type="submit" style="width: 100%; margin-top: 0.5rem;">Login</button>
+            </form>
 
-<p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
-
-{% for message in messages %}
-    <p>{{ message }}</p>
-{% endfor %}
-
-
+            <p style="margin-top: 1.5rem; text-align: center;">
+                Don't have an account? <a href="{% url 'register' %}">Register here</a>
+            </p>
+        </div>
+    </div>
 </body>
-</html>
+</html>
