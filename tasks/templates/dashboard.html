@@ -1,15 +1,463 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Student Dashboard</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<h1>Welcome to Student Task Management System</h1>
+{% block title %}Dashboard - Student Task Management System{% endblock %}
 
-<p>Login successful!</p>
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
 
-<a href="{% url 'student_logout' %}">Logout</a>
+    .welcome-title h1 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--dark);
+    }
 
-</body>
-</html>
+    .welcome-title p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-icon-blue { background: #e0f2fe; color: #0284c7; }
+    .stat-icon-indigo { background: #e0e7ff; color: #4338ca; }
+    .stat-icon-emerald { background: #dcfce7; color: #16a34a; }
+    .stat-icon-amber { background: #fef3c7; color: #d97706; }
+
+    .stat-details h3 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--dark);
+        line-height: 1;
+    }
+
+    .stat-details p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+
+    /* Tabs Layout */
+    .tabs-nav {
+        display: flex;
+        gap: 10px;
+        border-bottom: 2px solid var(--border);
+        margin-bottom: 1.5rem;
+    }
+
+    .tab-btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+
+    /* Task Table & Cards */
+    .task-table-container {
+        background: #ffffff;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .task-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .task-table th {
+        background: #f8fafc;
+        padding: 1rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .task-table td {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.92rem;
+        vertical-align: middle;
+    }
+
+    .task-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .task-table tr:hover {
+        background: #f8fafc;
+    }
+
+    .task-title-link {
+        font-weight: 600;
+        color: var(--dark);
+        text-decoration: none;
+    }
+
+    .task-title-link:hover {
+        color: var(--primary);
+    }
+
+    /* Notifications Block */
+    .notifications-card {
+        background: #ffffff;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .notification-item {
+        padding: 0.85rem;
+        border-radius: 8px;
+        background: var(--light-bg);
+        margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+    }
+
+    .notification-item.unread {
+        background: #e0e7ff;
+        border-left: 4px solid var(--primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Header Section -->
+<div class="dashboard-header">
+    <div class="welcome-title">
+        <h1>Welcome, {{ request.user.username }}!</h1>
+        <p>Manage your tasks, assign team members, and track updates</p>
+    </div>
+    <a href="{% url 'create_task' %}" class="btn-primary">
+        <i class="fa-solid fa-plus-circle"></i> Create New Task
+    </a>
+</div>
+
+<!-- Stats Overview Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-indigo">
+            <i class="fa-solid fa-user-check"></i>
+        </div>
+        <div class="stat-details">
+            <h3>{{ assigned_tasks.count }}</h3>
+            <p>Assigned to Me</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-blue">
+            <i class="fa-solid fa-folder-plus"></i>
+        </div>
+        <div class="stat-details">
+            <h3>{{ created_tasks.count }}</h3>
+            <p>Created by Me</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-emerald">
+            <i class="fa-solid fa-list-check"></i>
+        </div>
+        <div class="stat-details">
+            <h3>{{ all_tasks.count }}</h3>
+            <p>Total Tasks</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-amber">
+            <i class="fa-solid fa-bell"></i>
+        </div>
+        <div class="stat-details">
+            <h3>{{ unread_notifications_count }}</h3>
+            <p>Unread Alerts</p>
+        </div>
+    </div>
+</div>
+
+<!-- Notifications Panel -->
+{% if notifications %}
+    <div class="notifications-card">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--dark); display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-bell" style="color: var(--warning);"></i> Your Recent Task Notifications
+        </h3>
+        <div>
+            {% for notif in notifications|slice:":5" %}
+                <div class="notification-item {% if not notif.is_read %}unread{% endif %}">
+                    <div>
+                        <span>{{ notif.message }}</span>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">{{ notif.created_at|timesince }} ago</div>
+                    </div>
+                    {% if not notif.is_read %}
+                        <a href="{% url 'mark_notification_read' notif.id %}" class="btn-secondary" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                            Mark Read
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+<!-- Tabs Navigation -->
+<div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('assigned')">
+        <i class="fa-solid fa-user-check"></i> Assigned to Me ({{ assigned_tasks.count }})
+    </button>
+    <button class="tab-btn" onclick="switchTab('created')">
+        <i class="fa-solid fa-pen-to-square"></i> Created by Me ({{ created_tasks.count }})
+    </button>
+    <button class="tab-btn" onclick="switchTab('all')">
+        <i class="fa-solid fa-globe"></i> All Team Tasks ({{ all_tasks.count }})
+    </button>
+</div>
+
+<!-- Tab 1: Assigned to Me -->
+<div id="tab-assigned" class="tab-content">
+    <div class="task-table-container">
+        {% if assigned_tasks %}
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th>Task Title</th>
+                        <th>Assignee</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Deadline</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in assigned_tasks %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'task_detail' task.id %}" class="task-title-link">
+                                    {{ task.title }}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge" style="background: #e0e7ff; color: #4338ca;">
+                                    <i class="fa-solid fa-user"></i> {{ task.assignee.username }} (You)
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if task.priority == 'High' %}badge-high{% elif task.priority == 'Medium' %}badge-medium{% else %}badge-low{% endif %}">
+                                    {{ task.priority }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if task.status == 'Pending' %}badge-pending{% elif task.status == 'To Do' %}badge-todo{% elif task.status == 'In Progress' %}badge-in-progress{% else %}badge-completed{% endif %}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                            <td>{{ task.deadline|default:"-" }}</td>
+                            <td>
+                                <a href="{% url 'task_detail' task.id %}" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                                    <i class="fa-solid fa-eye"></i> View & Manage
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="padding: 2.5rem; text-align: center; color: var(--text-muted);">
+                <i class="fa-solid fa-clipboard-check" style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #cbd5e1;"></i>
+                <p>No tasks currently assigned to you.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tab 2: Created by Me -->
+<div id="tab-created" class="tab-content" style="display: none;">
+    <div class="task-table-container">
+        {% if created_tasks %}
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th>Task Title</th>
+                        <th>Current Assignee</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in created_tasks %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'task_detail' task.id %}" class="task-title-link">
+                                    {{ task.title }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if task.assignee %}
+                                    <span class="badge" style="background: #e0f2fe; color: #0284c7;">
+                                        <i class="fa-solid fa-user"></i> {{ task.assignee.username }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge" style="background: #fee2e2; color: #dc2626;">Unassigned</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge {% if task.priority == 'High' %}badge-high{% elif task.priority == 'Medium' %}badge-medium{% else %}badge-low{% endif %}">
+                                    {{ task.priority }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if task.status == 'Pending' %}badge-pending{% elif task.status == 'To Do' %}badge-todo{% elif task.status == 'In Progress' %}badge-in-progress{% else %}badge-completed{% endif %}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'task_detail' task.id %}" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                                    <i class="fa-solid fa-user-pen"></i> Manage Task
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="padding: 2.5rem; text-align: center; color: var(--text-muted);">
+                <p>You haven't created any tasks yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tab 3: All Tasks -->
+<div id="tab-all" class="tab-content" style="display: none;">
+    <div class="task-table-container">
+        {% if all_tasks %}
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th>Task Title</th>
+                        <th>Created By</th>
+                        <th>Assignee</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in all_tasks %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'task_detail' task.id %}" class="task-title-link">
+                                    {{ task.title }}
+                                </a>
+                            </td>
+                            <td>{{ task.created_by.username }}</td>
+                            <td>
+                                {% if task.assignee %}
+                                    <span class="badge" style="background: #f1f5f9; color: #334155;">
+                                        {{ task.assignee.username }}
+                                    </span>
+                                {% else %}
+                                    <span style="color: var(--text-muted); font-size: 0.85rem;">Unassigned</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge {% if task.priority == 'High' %}badge-high{% elif task.priority == 'Medium' %}badge-medium{% else %}badge-low{% endif %}">
+                                    {{ task.priority }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if task.status == 'Pending' %}badge-pending{% elif task.status == 'To Do' %}badge-todo{% elif task.status == 'In Progress' %}badge-in-progress{% else %}badge-completed{% endif %}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'task_detail' task.id %}" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                                    View Details
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="padding: 2.5rem; text-align: center; color: var(--text-muted);">
+                <p>No tasks exist in the system.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.style.display = 'none';
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById('tab-' + tabName).style.display = 'block';
+        event.currentTarget.classList.add('active');
+    }
+</script>
+{% endblock %}

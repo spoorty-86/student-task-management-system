@@ -1,42 +1,97 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Student Registration</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<h1>Student Registration</h1>
+{% block title %}Register - Student Task Management System{% endblock %}
 
-<form method="POST">
-    {% csrf_token %}
+{% block extra_css %}
+<style>
+    .auth-card {
+        max-width: 450px;
+        margin: 2.5rem auto;
+        background: #ffffff;
+        padding: 2.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+    }
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .auth-header i {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+    .auth-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark);
+    }
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+    .auth-footer a {
+        color: var(--primary);
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
 
-    <input type="text"
-           name="username"
-           placeholder="Username"
-           required>
+{% block content %}
+<div class="auth-card">
+    <div class="auth-header">
+        <i class="fa-solid fa-user-plus"></i>
+        <h2>Create an Account</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Join your team and manage tasks seamlessly</p>
+    </div>
 
-    <br><br>
+    <form method="POST">
+        {% csrf_token %}
 
-    <input type="email"
-           name="email"
-           placeholder="Email"
-           required>
+        <div class="form-group">
+            <label class="form-label" for="username">Username</label>
+            <input type="text"
+                   id="username"
+                   name="username"
+                   class="form-control"
+                   placeholder="Choose a username"
+                   required>
+        </div>
 
-    <br><br>
+        <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input type="email"
+                   id="email"
+                   name="email"
+                   class="form-control"
+                   placeholder="student@university.edu"
+                   required>
+        </div>
 
-    <input type="password"
-           name="password"
-           placeholder="Password"
-           required>
+        <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input type="password"
+                   id="password"
+                   name="password"
+                   class="form-control"
+                   placeholder="Create a strong password"
+                   required>
+        </div>
 
-    <br><br>
+        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">
+            <i class="fa-solid fa-user-check"></i> Register Account
+        </button>
+    </form>
 
-    <button type="submit">Register</button>
-</form>
-
-{% for message in messages %}
-    <p>{{ message }}</p>
-{% endfor %}
-
-</body>
-</html>
+    <div class="auth-footer">
+        Already have an account? <a href="{% url 'student_login' %}">Login here</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Create New Task - Student Task Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .task-form-card {
+        max-width: 700px;
+        margin: 1.5rem auto;
+        background: #ffffff;
+        padding: 2.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+    }
+    .form-header {
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--light-bg);
+        padding-bottom: 1rem;
+    }
+    .form-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .form-header h2 i {
+        color: var(--primary);
+    }
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="task-form-card">
+    <div class="form-header">
+        <h2><i class="fa-solid fa-plus-circle"></i> Create New Task</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Assign tasks to team members and track progress</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label" for="title">Task Title *</label>
+            <input type="text"
+                   id="title"
+                   name="title"
+                   class="form-control"
+                   placeholder="e.g. Implement Database Migration Script"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="description">Task Description</label>
+            <textarea id="description"
+                      name="description"
+                      class="form-control"
+                      rows="4"
+                      placeholder="Provide detailed instructions for the task..."></textarea>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label class="form-label" for="assignee">Assignee (Team Member)</label>
+                <select id="assignee" name="assignee" class="form-select">
+                    <option value="">-- Select Team Member --</option>
+                    {% for member in team_members %}
+                        <option value="{{ member.id }}" {% if member == request.user %}selected{% endif %}>
+                            {{ member.username }} ({% if member.email %}{{ member.email }}{% else %}No Email{% endif %})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="priority">Priority</label>
+                <select id="priority" name="priority" class="form-select">
+                    <option value="Low">Low</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label class="form-label" for="status">Initial Status</label>
+                <select id="status" name="status" class="form-select">
+                    <option value="Pending" selected>Pending</option>
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="deadline">Deadline Date</label>
+                <input type="date" id="deadline" name="deadline" class="form-control">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 1.5rem; justify-content: flex-end;">
+            <a href="{% url 'dashboard' %}" class="btn-secondary">Cancel</a>
+            <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-paper-plane"></i> Create Task
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

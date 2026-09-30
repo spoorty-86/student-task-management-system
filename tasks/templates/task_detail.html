@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+
+{% block title %}Task Details - {{ task.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .task-detail-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.75rem;
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+        .task-detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .detail-card {
+        background: #ffffff;
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        margin-bottom: 1.5rem;
+    }
+
+    .task-header-banner {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .task-title-section h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1.3;
+    }
+
+    .task-meta-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 0.75rem;
+    }
+
+    .assignee-highlight-card {
+        background: linear-gradient(135deg, #f8fafc, #eef2ff);
+        border: 1.5px solid #c7d2fe;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .review-highlight-card {
+        background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+        border: 1.5px solid #6ee7b7;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .assignee-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .assignee-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .assignee-info h4 {
+        font-size: 1.1rem;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    .assignee-info p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .change-assignee-box {
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+        border-top: 1px dashed #cbd5e1;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .activity-feed {
+        list-style: none;
+    }
+
+    .activity-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        color: var(--primary);
+        margin-top: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Back Navigation -->
+<div style="margin-bottom: 1rem; display: flex; gap: 10px;">
+    <a href="{% url 'dashboard' %}" class="btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    </a>
+    <a href="{% url 'completed_reviews' %}" class="btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">
+        <i class="fa-solid fa-clipboard-check"></i> Completed Reviews
+    </a>
+</div>
+
+<div class="task-detail-grid">
+
+    <!-- Left Main Column -->
+    <div>
+        <div class="detail-card">
+            <!-- Header Banner -->
+            <div class="task-header-banner">
+                <div class="task-title-section">
+                    <h1>{{ task.title }}</h1>
+                    <div class="task-meta-pills">
+                        <span class="badge {% if task.status == 'Pending' %}badge-pending{% elif task.status == 'To Do' %}badge-todo{% elif task.status == 'In Progress' %}badge-in-progress{% else %}badge-completed{% endif %}">
+                            <i class="fa-solid fa-circle-dot"></i> {{ task.status }}
+                        </span>
+                        {% if task.status == 'Completed' %}
+                            {% if task.is_reviewed %}
+                                <span class="badge badge-reviewed">
+                                    <i class="fa-solid fa-award"></i> Reviewed
+                                </span>
+                            {% else %}
+                                <span class="badge badge-pending-review">
+                                    <i class="fa-solid fa-hourglass-half"></i> Pending Review
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                        <span class="badge {% if task.priority == 'High' %}badge-high{% elif task.priority == 'Medium' %}badge-medium{% else %}badge-low{% endif %}">
+                            <i class="fa-solid fa-flag"></i> Priority: {{ task.priority }}
+                        </span>
+                        {% if task.deadline %}
+                            <span class="badge" style="background: #f1f5f9; color: #334155;">
+                                <i class="fa-regular fa-calendar"></i> Due: {{ task.deadline }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div style="margin-bottom: 2rem;">
+                <h3 class="section-title"><i class="fa-solid fa-align-left"></i> Description</h3>
+                <div style="background: var(--light-bg); padding: 1.25rem; border-radius: 8px; font-size: 0.95rem; color: var(--text-main); white-space: pre-line;">
+                    {% if task.description %}
+                        {{ task.description }}
+                    {% else %}
+                        <em style="color: var(--text-muted);">No description provided for this task.</em>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Completed Task Review Feature Box -->
+            {% if task.status == 'Completed' %}
+                <div class="review-highlight-card">
+                    <h3 class="section-title" style="color: #047857;">
+                        <i class="fa-solid fa-clipboard-check"></i> Task Completion Review
+                    </h3>
+
+                    {% if task.is_reviewed %}
+                        <div style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #a7f3d0; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <strong style="color: #065f46; font-size: 1rem;">
+                                    <i class="fa-solid fa-user-check"></i> Reviewed by {{ task.reviewed_by.username|default:"Manager" }}
+                                </strong>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">
+                                    {{ task.reviewed_at|date:"M d, Y, h:i A" }}
+                                </span>
+                            </div>
+                            <div style="font-size: 0.92rem; color: var(--text-main); line-height: 1.5; white-space: pre-line;">
+                                {% if task.review_feedback %}
+                                    {{ task.review_feedback }}
+                                {% else %}
+                                    <em>Marked as reviewed with no detailed comments.</em>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if can_review %}
+                        <div style="margin-top: 1rem;">
+                            <form method="POST" action="{% url 'review_task' task.id %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label class="form-label" for="review_feedback" style="color: #065f46;">
+                                        {% if task.is_reviewed %}Update Review Feedback{% else %}Provide Review Feedback / Evaluation{% endif %}:
+                                    </label>
+                                    <textarea id="review_feedback"
+                                              name="review_feedback"
+                                              class="form-control"
+                                              rows="3"
+                                              placeholder="Write feedback for the student regarding this completed task...">{{ task.review_feedback }}</textarea>
+                                </div>
+                                <button type="submit" class="btn-success" style="width: 100%;">
+                                    <i class="fa-solid fa-check-double"></i> {% if task.is_reviewed %}Update Review Feedback{% else %}Submit Task Review{% endif %}
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Change Task Assignee Feature Box -->
+            <div class="assignee-highlight-card">
+                <h3 class="section-title" style="color: var(--primary-hover);">
+                    <i class="fa-solid fa-user-gear"></i> Task Assignee Management
+                </h3>
+
+                <div class="assignee-header">
+                    <div class="assignee-avatar">
+                        {% if task.assignee %}
+                            {{ task.assignee.username|slice:":1"|upper }}
+                        {% else %}
+                            ?
+                        {% endif %}
+                    </div>
+                    <div class="assignee-info">
+                        <p style="text-transform: uppercase; font-size: 0.75rem; font-weight: 700; color: var(--primary); letter-spacing: 0.5px;">Assigned Student / Team Member</p>
+                        <h4>
+                            {% if task.assignee %}
+                                {{ task.assignee.username }}
+                            {% else %}
+                                <span style="color: var(--danger);">Currently Unassigned</span>
+                            {% endif %}
+                        </h4>
+                        {% if task.assignee and task.assignee.email %}
+                            <p><i class="fa-regular fa-envelope"></i> {{ task.assignee.email }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Form to Change Assignee -->
+                {% if is_authorized %}
+                    <div class="change-assignee-box">
+                        <form method="POST" action="{% url 'change_task_assignee' task.id %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="form-label" for="assignee-select">
+                                    <i class="fa-solid fa-user-pen"></i> Select New Assignee from Team Members:
+                                </label>
+                                <select id="assignee-select" name="assignee" class="form-select" style="font-weight: 600;">
+                                    <option value="">-- Unassign Task --</option>
+                                    {% for member in team_members %}
+                                        <option value="{{ member.id }}" {% if task.assignee == member %}selected{% endif %}>
+                                            {{ member.username }} {% if member.email %}({{ member.email }}){% endif %}
+                                            {% if member == task.created_by %}[Creator]{% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+                                <i class="fa-solid fa-bell"></i> Changing the assignee will update the task in the database and automatically notify the selected team member.
+                            </p>
+
+                            <button type="submit" class="btn-primary" style="width: 100%;">
+                                <i class="fa-solid fa-floppy-disk"></i> Save New Assignee & Notify
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div style="padding: 0.75rem; background: #fff3cd; color: #856404; border-radius: 6px; font-size: 0.85rem; margin-top: 1rem;">
+                        <i class="fa-solid fa-shield-halved"></i> Only the task creator or current assignee can reassign this task.
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Update Task Status Section -->
+            <div>
+                <h3 class="section-title"><i class="fa-solid fa-arrows-rotate"></i> Update Task Status</h3>
+                {% if is_authorized %}
+                    <form method="POST" action="{% url 'update_task_status' task.id %}" style="display: flex; gap: 10px; align-items: center;">
+                        {% csrf_token %}
+                        <select name="status" class="form-select" style="max-width: 240px; font-weight: 600;">
+                            <option value="Pending" {% if task.status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="To Do" {% if task.status == 'To Do' %}selected{% endif %}>To Do</option>
+                            <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                            <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                        <button type="submit" class="btn-primary">
+                            <i class="fa-solid fa-arrows-rotate"></i> Update Status
+                        </button>
+                    </form>
+                {% else %}
+                    <div style="padding: 0.75rem; background: #fff3cd; color: #856404; border-radius: 6px; font-size: 0.85rem;">
+                        <i class="fa-solid fa-lock"></i> Only the assigned student or task manager can update the task status.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div>
+        <!-- Task Meta Card -->
+        <div class="detail-card">
+            <h3 class="section-title"><i class="fa-solid fa-circle-info"></i> Task Info</h3>
+            <div style="font-size: 0.9rem; display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                    <strong style="color: var(--text-muted);">Created By:</strong>
+                    <div><i class="fa-solid fa-user-ninja"></i> {{ task.created_by.username }}</div>
+                </div>
+                <div>
+                    <strong style="color: var(--text-muted);">Created Date:</strong>
+                    <div><i class="fa-regular fa-clock"></i> {{ task.created_at|date:"M d, Y, h:i A" }}</div>
+                </div>
+                {% if task.completion_date %}
+                    <div>
+                        <strong style="color: var(--text-muted);">Completion Date:</strong>
+                        <div style="color: var(--success); font-weight: 600;">
+                            <i class="fa-solid fa-check-circle"></i> {{ task.completion_date|date:"M d, Y, h:i A" }}
+                        </div>
+                    </div>
+                {% endif %}
+                <div>
+                    <strong style="color: var(--text-muted);">Deadline:</strong>
+                    <div>
+                        {% if task.deadline %}
+                            <i class="fa-solid fa-calendar-day"></i> {{ task.deadline }}
+                        {% else %}
+                            <em>No deadline set</em>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Notifications & Activity -->
+        <div class="detail-card">
+            <h3 class="section-title"><i class="fa-solid fa-history"></i> Activity & Log</h3>
+            {% if task_notifications %}
+                <ul class="activity-feed">
+                    {% for notif in task_notifications %}
+                        <li class="activity-item">
+                            <i class="fa-solid fa-bell activity-icon"></i>
+                            <div>
+                                <div style="font-weight: 500;">{{ notif.message }}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ notif.created_at|timesince }} ago</div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="font-size: 0.88rem; color: var(--text-muted);">No activity recorded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
